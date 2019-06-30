@@ -34,40 +34,39 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Auth, API, graphqlOperation } from "aws-amplify";
-import router from "@/router";
+import { Component, Vue } from 'vue-property-decorator'
+import { Auth, API, graphqlOperation } from 'aws-amplify'
+import router from '@/router'
 
 type listItemType = {
-  id: string;
-  name: string;
-  description: string;
-};
+  id: string
+  name: string
+  description: string
+}
 
 @Component({})
-export default class TODO extends Vue {
-  cardBody: string = "";
-  cardTitle: string = "";
-  listItems: listItemType[] = [];
+export default class Todo extends Vue {
+  cardBody: string = ''
+  cardTitle: string = ''
+  listItems: listItemType[] = []
 
   async created() {
-    await this.getListItems();
+    await this.getListItems()
   }
 
   // サインアウト処理
   public signOut() {
     Auth.signOut()
       .then(data => {
-        return router.push("/auth");
+        return router.push('/auth')
       })
       .catch(err => {
-        console.error(err);
-      });
+        console.error(err)
+      })
   }
 
   // TODOリストの作成
   public async create() {
-    console.log(this);
     const gqlBody = `
       mutation create {
         createTodo(input: {
@@ -79,14 +78,14 @@ export default class TODO extends Vue {
           description
         }
       }
-    `;
-    const result: any = await API.graphql(graphqlOperation(gqlBody));
-    this.listItems.unshift(result.data.createTodo);
+    `
+    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    this.listItems.unshift(result.data.createTodo)
   }
 
   // TODOリストの削除
   public async remove(id: string) {
-    console.log(id);
+    console.log(id)
     const gqlBody = `
       mutation delete {
         deleteTodo(input: {
@@ -95,16 +94,15 @@ export default class TODO extends Vue {
           id
         }
       }
-    `;
-    const result: any = await API.graphql(graphqlOperation(gqlBody));
-    const newListItems: listItemType[] = [];
+    `
+    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    const newListItems: listItemType[] = []
     this.listItems.filter(item => {
-      console.log(item);
       if (result.data.deleteTodo.id !== item.id) {
-        newListItems.push(item);
+        newListItems.push(item)
       }
-    });
-    this.listItems = newListItems;
+    })
+    this.listItems = newListItems
   }
 
   // TODOリスト取得
@@ -119,11 +117,9 @@ export default class TODO extends Vue {
           }
         }
       }
-    `;
-    const result: any = await API.graphql(graphqlOperation(gqlBody));
-    this.listItems = result.data.listTodos.items;
-
-    console.log(this.listItems);
+    `
+    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    this.listItems = result.data.listTodos.items
   }
 }
 </script>
