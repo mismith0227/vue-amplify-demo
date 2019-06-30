@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "vue-note-dev-20190630115157-authRole",
+            "UnauthRoleArn": "arn:aws:iam::001524959878:role/vue-note-dev-20190630115157-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::001524959878:role/vue-note-dev-20190630115157-authRole",
+            "Region": "ap-northeast-1",
+            "DeploymentBucketName": "vue-note-dev-20190630115157-deployment",
+            "UnauthRoleName": "vue-note-dev-20190630115157-unauthRole",
+            "StackName": "vue-note-dev-20190630115157",
+            "StackId": "arn:aws:cloudformation:ap-northeast-1:001524959878:stack/vue-note-dev-20190630115157/09d85650-9ae2-11e9-a245-0a534bae3094"
+        },
+        "categories": {
+            "auth": {
+                "vuenoteec21ec97": {}
+            }
+        }
+    }
+}

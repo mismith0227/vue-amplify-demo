@@ -1,0 +1,10 @@
+{
+    "AppSyncApiName": "vuenote",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authvuenoteec21ec97",
+            "Outputs.UserPoolId"
+        ]
+    }
+}
