@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import About from './views/About.vue'
 import Todo from './views/Todo.vue'
 
 import * as AmplifyModules from 'aws-amplify'

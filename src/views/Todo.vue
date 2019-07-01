@@ -1,42 +1,44 @@
 <template>
   <div class="todo-list-page">
-    <div class="title">TODO List</div>
     <div class="list-area">
-      <el-button class="signout" @click="signOut">SignOut</el-button>
-      <el-col class="todo-card" :span="8">
-        <el-card class="box-card">
-          <div class="card-header" slot="header">
-            <el-input v-model="cardTitle"></el-input>
-          </div>
-          <div class="card-body">
-            <el-input type="textarea" :rows="10" v-model="cardBody"></el-input>
-          </div>
+      <div class="form">
+        <div class="form-title">todo作成</div>
+
+        <div class="form-section">
+          <div class="form-label">タイトル</div>
+          <el-input v-model="cardTitle"></el-input>
+        </div>
+
+        <div class="form-section">
+          <div class="form-label">詳細</div>
+          <el-input type="textarea" :rows="5" v-model="cardBody"></el-input>
+        </div>
+        <div class="button-section">
           <el-button class="card-button card-create-button" type="primary" @click="create">作成</el-button>
-        </el-card>
-      </el-col>
-      <el-col class="todo-card" :span="8" v-for="item in listItems" :key="item.name">
-        <el-card class="box-card">
-          <div class="card-header" slot="header">
-            <div class="text">{{ item.name }}</div>
-          </div>
-          <div class="card-body">
-            <div class="text">{{ item.description }}</div>
+        </div>
+      </div>
+
+      <div class="todos">
+        <div>todoリスト</div>
+        <div class="todo" v-for="item in listItems" :key="item.name">
+          <div class="todo-content">
+            <div class="todo-title" slot="header">{{ item.name }}</div>
+            <div class="todo-desc">{{ item.description }}</div>
           </div>
           <el-button
             class="card-button card-delete-button"
             type="danger"
             @click="remove(item.id)"
           >削除</el-button>
-        </el-card>
-      </el-col>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Auth, API, graphqlOperation } from 'aws-amplify'
-import router from '@/router'
+import { API, graphqlOperation } from 'aws-amplify'
 
 type listItemType = {
   id: string
@@ -46,26 +48,15 @@ type listItemType = {
 
 @Component({})
 export default class Todo extends Vue {
-  cardBody: string = ''
   cardTitle: string = ''
+  cardBody: string = ''
   listItems: listItemType[] = []
 
   async created() {
     await this.getListItems()
   }
 
-  // サインアウト処理
-  public signOut() {
-    Auth.signOut()
-      .then(data => {
-        return router.push('/auth')
-      })
-      .catch(err => {
-        console.error(err)
-      })
-  }
-
-  // TODOリストの作成
+  // Todoの作成
   public async create() {
     const gqlBody = `
       mutation create {
@@ -81,9 +72,11 @@ export default class Todo extends Vue {
     `
     const result: any = await API.graphql(graphqlOperation(gqlBody))
     this.listItems.unshift(result.data.createTodo)
+    this.cardTitle = ''
+    this.cardBody = ''
   }
 
-  // TODOリストの削除
+  // Todoの削除
   public async remove(id: string) {
     console.log(id)
     const gqlBody = `
@@ -105,7 +98,7 @@ export default class Todo extends Vue {
     this.listItems = newListItems
   }
 
-  // TODOリスト取得
+  // Todoリスト取得
   public async getListItems() {
     const gqlBody = `
       query list {
@@ -128,38 +121,42 @@ export default class Todo extends Vue {
 .list-area {
   margin: 28px auto 0;
   width: 90vw;
+}
 
-  .signout {
-    font-weight: bold;
-    position: absolute;
-    right: 40px;
-    top: 40px;
+.form-section {
+  margin: 16px 0 0;
+}
+
+.button-section {
+  display: flex;
+  margin: 8px 0 0;
+  justify-content: center;
+}
+
+.todos {
+  margin: 24px 0 0;
+}
+
+.todo {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+  &:first-child {
+    border-top: 1px solid #ccc;
   }
+}
 
-  .todo-card {
-    padding: 15px;
+.todo-content {
+  flex: 1;
+}
 
-    .box-card {
-      height: 380px;
-      position: relative;
+.todo-title {
+  font-size: 24px;
+  font-weight: bold;
+}
 
-      .card-body {
-        text-align: left;
-      }
-
-      .el-button {
-        font-weight: bold;
-
-        &.card-button {
-          bottom: 10px;
-          left: 0;
-          margin: auto;
-          position: absolute;
-          right: 0;
-          width: 80px;
-        }
-      }
-    }
-  }
+.card-delete-button {
+  height: 40px;
 }
 </style>
