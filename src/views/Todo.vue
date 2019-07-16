@@ -1,22 +1,25 @@
 <template>
   <div class="todo-list-page">
     <div class="list-area">
-      <div class="form">
-        <div class="form-title">todo作成</div>
+      <el-button type="text" @click="dialogFormVisible = true">Todo作成</el-button>
 
-        <div class="form-section">
-          <div class="form-label">タイトル</div>
-          <el-input v-model="cardTitle"></el-input>
-        </div>
+      <el-dialog title="Todo作成" :visible.sync="dialogFormVisible">
+        <div class="form">
+          <div class="form-section">
+            <div class="form-label">タイトル</div>
+            <el-input v-model="cardTitle"></el-input>
+          </div>
 
-        <div class="form-section">
-          <div class="form-label">詳細</div>
-          <el-input type="textarea" :rows="5" v-model="cardBody"></el-input>
+          <div class="form-section">
+            <div class="form-label">詳細</div>
+            <el-input type="textarea" :rows="5" v-model="cardBody"></el-input>
+          </div>
+          <div class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">Cancel</el-button>
+            <el-button class="card-button card-create-button" type="primary" @click="create">作成</el-button>
+          </div>
         </div>
-        <div class="button-section">
-          <el-button class="card-button card-create-button" type="primary" @click="create">作成</el-button>
-        </div>
-      </div>
+      </el-dialog>
 
       <div class="todos">
         <div>todoリスト</div>
@@ -52,6 +55,12 @@ export default class Todo extends Vue {
   cardBody: string = ''
   listItems: listItemType[] = []
 
+  data() {
+    return {
+      dialogFormVisible: false,
+    }
+  }
+
   async created() {
     await this.getListItems()
   }
@@ -74,6 +83,7 @@ export default class Todo extends Vue {
     this.listItems.unshift(result.data.createTodo)
     this.cardTitle = ''
     this.cardBody = ''
+    this.$data.dialogFormVisible = false
   }
 
   // Todoの削除
