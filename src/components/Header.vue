@@ -2,7 +2,7 @@
   <div class="header">
     <div class="title">TODO List</div>
     <div class="nav">
-      <el-button class="signout" @click="signOut">SignOut</el-button>
+      <el-button class="signout" @click="signOut" v-if="getUser !== null">SignOut</el-button>
     </div>
   </div>
 </template>
@@ -11,15 +11,19 @@
 import { Auth } from 'aws-amplify'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import router from '@/router'
+import AmplifyStore from '../store'
 
 @Component
 export default class Header extends Vue {
-  @Prop() private msg!: string
+  public get getUser() {
+    return this.$store.state.user
+  }
 
   // サインアウト処理
   public signOut() {
     Auth.signOut()
       .then(data => {
+        AmplifyStore.commit('setUser', null)
         return router.push('/auth')
       })
       .catch(err => {
