@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="title">TODO List</div>
+    <div class="title">Stamp Note</div>
     <div class="nav">
       <el-button class="signout" @click="signOut" v-if="getUser !== null">SignOut</el-button>
     </div>
