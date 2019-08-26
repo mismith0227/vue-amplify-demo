@@ -27,7 +27,10 @@
           <div class="todo-content">
             <div class="todo-title" slot="header">{{ item.name }}</div>
             <div class="todo-desc">{{ item.description }}</div>
+            <div class="todo-desc">最終スタンプ日：xxxx/xx/xx</div>
           </div>
+          <el-button class="card-button" type="primary">Done</el-button>
+          <el-button class="card-button" type="info" @click="openEditModal(item)">編集</el-button>
           <el-button
             class="card-button card-delete-button"
             type="danger"
@@ -35,6 +38,24 @@
           >削除</el-button>
         </div>
       </div>
+
+      <el-dialog title="Todo編集" :visible.sync="dialogEditFormVisible">
+        <div class="form">
+          <div class="form-section">
+            <div class="form-label">タイトル</div>
+            <el-input v-model="editTitle"></el-input>
+          </div>
+
+          <div class="form-section">
+            <div class="form-label">詳細</div>
+            <el-input type="textarea" :rows="5" v-model="editBody"></el-input>
+          </div>
+          <div class="dialog-footer">
+            <el-button @click="dialogEditFormVisible = false">Cancel</el-button>
+            <el-button class="card-button card-create-button" type="primary" @click="edit()">編集</el-button>
+          </div>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -53,11 +74,15 @@ type listItemType = {
 export default class Todo extends Vue {
   cardTitle: string = ''
   cardBody: string = ''
+  editId: string = ''
+  editTitle: string = ''
+  editBody: string = ''
   listItems: listItemType[] = []
 
   data() {
     return {
       dialogFormVisible: false,
+      dialogEditFormVisible: false,
     }
   }
 
@@ -86,9 +111,40 @@ export default class Todo extends Vue {
     this.$data.dialogFormVisible = false
   }
 
+  public async openEditModal(item: listItemType) {
+    this.editId = item.id
+    this.editTitle = item.name
+    this.editBody = item.description
+    this.$data.dialogEditFormVisible = true
+  }
+
+  // Todoの編集
+  public async edit() {
+    const gqlBody = `
+      mutation update {
+        updateTodo(
+          input: {
+            id: "${this.editId}"
+            name: "${this.editTitle}"
+            description: "${this.editBody}"
+          }
+        ) {
+          id
+          name
+          description
+        }
+      }
+    `
+
+    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    // TODO: reduce
+    await this.getListItems()
+
+    this.$data.dialogEditFormVisible = false
+  }
+
   // Todoの削除
   public async remove(id: string) {
-    console.log(id)
     const gqlBody = `
       mutation delete {
         deleteTodo(input: {
