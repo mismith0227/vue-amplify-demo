@@ -21,23 +21,7 @@
         </div>
       </el-dialog>
 
-      <div class="todos">
-        <div>todoリスト</div>
-        <div class="todo" v-for="item in listItems" :key="item.name">
-          <div class="todo-content">
-            <div class="todo-title" slot="header">{{ item.name }}</div>
-            <div class="todo-desc">{{ item.description }}</div>
-            <div class="todo-desc">最終スタンプ日：xxxx/xx/xx</div>
-          </div>
-          <el-button class="card-button" type="primary">Done</el-button>
-          <el-button class="card-button" type="info" @click="openEditModal(item)">編集</el-button>
-          <el-button
-            class="card-button card-delete-button"
-            type="danger"
-            @click="remove(item.id)"
-          >削除</el-button>
-        </div>
-      </div>
+      <TaskList :listItems="listItems" @remove-item="remove($event)" />
 
       <el-dialog title="Todo編集" :visible.sync="dialogEditFormVisible">
         <div class="form">
@@ -63,6 +47,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { API, graphqlOperation } from 'aws-amplify'
+import TaskList from '../../organisms/TaskList/index.vue'
 
 type listItemType = {
   id: string
@@ -70,8 +55,12 @@ type listItemType = {
   description: string
 }
 
-@Component({})
-export default class Todo extends Vue {
+@Component({
+  components: {
+    TaskList,
+  },
+})
+export default class Home extends Vue {
   cardTitle: string = ''
   cardBody: string = ''
   editId: string = ''
@@ -145,6 +134,7 @@ export default class Todo extends Vue {
 
   // Todoの削除
   public async remove(id: string) {
+    console.log(id)
     const gqlBody = `
       mutation delete {
         deleteTodo(input: {
@@ -197,29 +187,6 @@ export default class Todo extends Vue {
   display: flex;
   margin: 8px 0 0;
   justify-content: center;
-}
-
-.todos {
-  margin: 24px 0 0;
-}
-
-.todo {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding: 8px;
-  &:first-child {
-    border-top: 1px solid #ccc;
-  }
-}
-
-.todo-content {
-  flex: 1;
-}
-
-.todo-title {
-  font-size: 24px;
-  font-weight: bold;
 }
 
 .card-delete-button {

@@ -11,7 +11,7 @@
 import { Auth } from 'aws-amplify'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import router from '@/router'
-import AmplifyStore from '../store'
+import AmplifyStore from '../../../store'
 
 @Component
 export default class Header extends Vue {

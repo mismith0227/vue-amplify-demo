@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import About from './views/About.vue'
-import Todo from './views/Todo.vue'
+import Home from './components/pages/Home/index.vue'
 
 import * as AmplifyModules from 'aws-amplify'
 import { AmplifyEventBus, components } from 'aws-amplify-vue'
@@ -50,8 +49,8 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Todo',
-      component: Todo,
+      name: 'Home',
+      component: Home,
       meta: { requiresAuth: true },
     },
     {
