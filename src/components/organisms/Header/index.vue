@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="title">Stamp Note</div>
+    <TextComponent class="title" :text="'Stamp Note'" />
     <div class="nav">
       <el-button class="signout" @click="signOut" v-if="getUser !== null">SignOut</el-button>
     </div>
@@ -12,8 +12,13 @@ import AmplifyStore from '../../../store'
 import router from '@/router'
 import { Auth } from 'aws-amplify'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import TextComponent from '../../atoms/Text/index.vue'
 
-@Component
+@Component({
+  components: {
+    TextComponent,
+  },
+})
 export default class Header extends Vue {
   public get getUser() {
     return this.$store.state.user
