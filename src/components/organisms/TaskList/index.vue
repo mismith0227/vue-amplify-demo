@@ -1,6 +1,6 @@
 <template>
   <div class="todos">
-    <div>Taskリスト</div>
+    <div class="todos-title">Taskリスト</div>
     <div class="todo" v-for="item in listItems" :key="item.name">
       <div class="todo-content">
         <div class="todo-title" slot="header">{{ item.name }}</div>
