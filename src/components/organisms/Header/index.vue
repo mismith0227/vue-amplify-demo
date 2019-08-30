@@ -4,16 +4,15 @@
       <h1>Stamp Note</h1>
     </TextComponent>
     <div class="nav">
-      <el-button class="signout" @click="signOut" v-if="getUser !== null">SignOut</el-button>
+      <el-button class="signout" @click="onClickSignOut" v-if="getUser !== null">SignOut</el-button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import AmplifyStore from '../../../store'
 import router from '@/router'
-import { Auth } from 'aws-amplify'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { signOut } from '../../../apis/Auth'
 import TextComponent from '../../atoms/Text/index.vue'
 
 @Component({
@@ -27,15 +26,8 @@ export default class Header extends Vue {
   }
 
   // サインアウト処理
-  public signOut() {
-    Auth.signOut()
-      .then(data => {
-        AmplifyStore.commit('setUser', null)
-        return router.push('/auth')
-      })
-      .catch(err => {
-        console.error(err)
-      })
+  public onClickSignOut() {
+    signOut()
   }
 
   public textClick() {

@@ -13,6 +13,8 @@ export default {
     Header,
   },
 }
+
+console.log(process.env.VUE_APP_NODE_ENV)
 </script>
 
 

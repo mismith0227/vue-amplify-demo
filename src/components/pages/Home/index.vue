@@ -21,7 +21,11 @@
         </div>
       </el-dialog>
 
-      <TaskList :listItems="listItems" @remove-item="remove($event)" />
+      <TaskList
+        :listItems="listItems"
+        @edit-item="openEditModal($event)"
+        @remove-item="remove($event)"
+      />
 
       <el-dialog title="Todo編集" :visible.sync="dialogEditFormVisible">
         <div class="form">
@@ -45,8 +49,8 @@
 </template>
 
 <script lang="ts">
+import { createTask, editTask, getList, removeTask } from '../../../apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
-import { API, graphqlOperation } from 'aws-amplify'
 import TaskList from '../../organisms/TaskList/index.vue'
 
 type listItemType = {
@@ -81,19 +85,8 @@ export default class Home extends Vue {
 
   // Todoの作成
   public async create() {
-    const gqlBody = `
-      mutation create {
-        createTodo(input: {
-          name: "${this.cardTitle}"
-          description: "${this.cardBody}"
-        }) {
-          id
-          name
-          description
-        }
-      }
-    `
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    const result: any = await createTask(this.cardTitle, this.cardBody)
+
     this.listItems.unshift(result.data.createTodo)
     this.cardTitle = ''
     this.cardBody = ''
@@ -109,23 +102,11 @@ export default class Home extends Vue {
 
   // Todoの編集
   public async edit() {
-    const gqlBody = `
-      mutation update {
-        updateTodo(
-          input: {
-            id: "${this.editId}"
-            name: "${this.editTitle}"
-            description: "${this.editBody}"
-          }
-        ) {
-          id
-          name
-          description
-        }
-      }
-    `
-
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    const result: any = await editTask(
+      this.editId,
+      this.editTitle,
+      this.editBody
+    )
     // TODO: reduce
     await this.getListItems()
 
@@ -134,16 +115,7 @@ export default class Home extends Vue {
 
   // Todoの削除
   public async remove(id: string) {
-    const gqlBody = `
-      mutation delete {
-        deleteTodo(input: {
-          id: "${id}"
-        }) {
-          id
-        }
-      }
-    `
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    const result: any = await removeTask(id)
     const newListItems: listItemType[] = []
     this.listItems.filter(item => {
       if (result.data.deleteTodo.id !== item.id) {
@@ -155,18 +127,7 @@ export default class Home extends Vue {
 
   // Todoリスト取得
   public async getListItems() {
-    const gqlBody = `
-      query list {
-        listTodos(limit: 10) {
-          items {
-            id
-            name
-            description
-          }
-        }
-      }
-    `
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
+    const result: any = await getList()
     this.listItems = result.data.listTodos.items
   }
 }

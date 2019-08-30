@@ -8,7 +8,7 @@
         <div class="todo-desc">最終スタンプ日：xxxx/xx/xx</div>
       </div>
       <el-button class="card-button" type="primary">Done</el-button>
-      <el-button class="card-button" type="info" @click="openEditModal(item)">編集</el-button>
+      <el-button class="card-button" type="info" @click="editItem(item)">編集</el-button>
       <el-button
         class="card-button card-delete-button"
         type="danger"
@@ -25,6 +25,9 @@ import { API, graphqlOperation } from 'aws-amplify'
 @Component
 export default class TaskList extends Vue {
   @Prop() private listItems
+
+  @Emit('edit-item')
+  editItem(item) {}
 
   @Emit('remove-item')
   removeItem(id) {}
