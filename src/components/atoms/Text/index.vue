@@ -1,13 +1,16 @@
 <template>
-  <div class="wrap">{{text}}</div>
+  <div class="wrap" @click="click()">
+    <slot></slot>
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Emit } from 'vue-property-decorator'
 
 @Component
 export default class Header extends Vue {
-  @Prop() private text
+  @Emit('click')
+  click() {}
 }
 </script>
 

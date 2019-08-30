@@ -134,7 +134,6 @@ export default class Home extends Vue {
 
   // Todoの削除
   public async remove(id: string) {
-    console.log(id)
     const gqlBody = `
       mutation delete {
         deleteTodo(input: {

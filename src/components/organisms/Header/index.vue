@@ -1,6 +1,8 @@
 <template>
   <div class="header">
-    <TextComponent class="title" :text="'Stamp Note'" />
+    <TextComponent class="title" @click="textClick()">
+      <h1>Stamp Note</h1>
+    </TextComponent>
     <div class="nav">
       <el-button class="signout" @click="signOut" v-if="getUser !== null">SignOut</el-button>
     </div>
@@ -34,6 +36,10 @@ export default class Header extends Vue {
       .catch(err => {
         console.error(err)
       })
+  }
+
+  public textClick() {
+    console.log('test')
   }
 }
 </script>
