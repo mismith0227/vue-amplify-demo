@@ -22,7 +22,7 @@
       </el-dialog>
 
       <TaskList
-        :listItems="listItems"
+        :listItems="this.tasks"
         @edit-item="openEditModal($event)"
         @remove-item="remove($event)"
       />
@@ -49,9 +49,12 @@
 </template>
 
 <script lang="ts">
-import { createTask, editTask, getList, removeTask } from '@/apis/Tasks/'
+import * as TasksApi from '@/apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
 import TaskList from '@/components/organisms/TaskList/index.vue'
+import { mapActions, Actions } from '@/store/modules/tasks'
+import { Task } from '@/types/Task'
+import { Getter } from 'vuex-class'
 
 type listItemType = {
   id: string
@@ -60,6 +63,9 @@ type listItemType = {
 }
 
 @Component({
+  methods: {
+    ...mapActions(['getTasksAction']),
+  },
   components: {
     TaskList,
   },
@@ -79,13 +85,13 @@ export default class Home extends Vue {
     }
   }
 
-  async created() {
-    await this.getListItems()
-  }
+  @Getter('tasks/tasks') tasks!: Task[]
+
+  getTasksAction!: () => void
 
   // Todoの作成
   public async create() {
-    const result: any = await createTask(this.cardTitle, this.cardBody)
+    const result: any = await TasksApi.createTask(this.cardTitle, this.cardBody)
 
     this.listItems.unshift(result.data.createTodo)
     this.cardTitle = ''
@@ -102,7 +108,7 @@ export default class Home extends Vue {
 
   // Todoの編集
   public async edit() {
-    const result: any = await editTask(
+    const result: any = await TasksApi.updateTask(
       this.editId,
       this.editTitle,
       this.editBody
@@ -115,7 +121,7 @@ export default class Home extends Vue {
 
   // Todoの削除
   public async remove(id: string) {
-    const result: any = await removeTask(id)
+    const result: any = await TasksApi.removeTask(id)
     const newListItems: listItemType[] = []
     this.listItems.filter(item => {
       if (result.data.deleteTodo.id !== item.id) {
@@ -125,10 +131,13 @@ export default class Home extends Vue {
     this.listItems = newListItems
   }
 
+  async created() {
+    await this.getListItems()
+  }
+
   // Todoリスト取得
   public async getListItems() {
-    const result: any = await getList()
-    this.listItems = result.data.listTodos.items
+    this.getTasksAction()
   }
 }
 </script>

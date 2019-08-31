@@ -4,7 +4,7 @@
       <h1>Stamp Note</h1>
     </TextComponent>
     <div class="nav">
-      <el-button class="signout" @click="onClickSignOut" v-if="getUser !== null">SignOut</el-button>
+      <el-button class="signout" @click="onClickSignOut" v-if="getUser">SignOut</el-button>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ import TextComponent from '@/components/atoms/Text/index.vue'
 })
 export default class Header extends Vue {
   public get getUser() {
-    return this.$store.state.user
+    return this.$store.state.auth.user
   }
 
   // サインアウト処理

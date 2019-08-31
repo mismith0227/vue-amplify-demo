@@ -33,7 +33,7 @@ export function createTask(title: string, description: string) {
   return API.graphql(graphqlOperation(gqlBody))
 }
 
-export function editTask(id: string, title: string, description: string) {
+export function updateTask(id: string, title: string, description: string) {
   const gqlBody = `
       mutation update {
         updateTodo(
