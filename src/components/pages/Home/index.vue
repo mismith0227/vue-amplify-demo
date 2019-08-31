@@ -49,9 +49,9 @@
 </template>
 
 <script lang="ts">
-import { createTask, editTask, getList, removeTask } from '../../../apis/Tasks/'
+import { createTask, editTask, getList, removeTask } from '@/apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
-import TaskList from '../../organisms/TaskList/index.vue'
+import TaskList from '@/components/organisms/TaskList/index.vue'
 
 type listItemType = {
   id: string

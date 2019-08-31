@@ -1,6 +1,6 @@
 import router from '@/router'
+import AmplifyStore from '@/store'
 import { Auth } from 'aws-amplify'
-import AmplifyStore from '../../store'
 
 export function signOut() {
   Auth.signOut()

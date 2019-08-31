@@ -12,8 +12,8 @@
 <script lang="ts">
 import router from '@/router'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { signOut } from '../../../apis/Auth'
-import TextComponent from '../../atoms/Text/index.vue'
+import { signOut } from '@/apis/Auth'
+import TextComponent from '@/components/atoms/Text/index.vue'
 
 @Component({
   components: {

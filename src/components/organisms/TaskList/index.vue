@@ -20,7 +20,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Emit } from 'vue-property-decorator'
-import { API, graphqlOperation } from 'aws-amplify'
 
 @Component
 export default class TaskList extends Vue {
