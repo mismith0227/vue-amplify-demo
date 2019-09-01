@@ -64,7 +64,12 @@ type listItemType = {
 
 @Component({
   methods: {
-    ...mapActions(['getTasksAction']),
+    ...mapActions([
+      'getTasksAction',
+      'addTaskAction',
+      'updateTaskAction',
+      'removeTaskAction',
+    ]),
   },
   components: {
     TaskList,
@@ -88,12 +93,14 @@ export default class Home extends Vue {
   @Getter('tasks/tasks') tasks!: Task[]
 
   getTasksAction!: () => void
+  addTaskAction!: (payload) => void
+  updateTaskAction!: (payload) => void
+  removeTaskAction!: (id: string) => void
 
   // Todoの作成
   public async create() {
-    const result: any = await TasksApi.createTask(this.cardTitle, this.cardBody)
+    this.addTaskAction({ title: this.cardTitle, description: this.cardBody })
 
-    this.listItems.unshift(result.data.createTodo)
     this.cardTitle = ''
     this.cardBody = ''
     this.$data.dialogFormVisible = false
@@ -108,27 +115,18 @@ export default class Home extends Vue {
 
   // Todoの編集
   public async edit() {
-    const result: any = await TasksApi.updateTask(
-      this.editId,
-      this.editTitle,
-      this.editBody
-    )
-    // TODO: reduce
-    await this.getListItems()
+    this.updateTaskAction({
+      id: this.editId,
+      title: this.editTitle,
+      description: this.editBody,
+    })
 
     this.$data.dialogEditFormVisible = false
   }
 
   // Todoの削除
   public async remove(id: string) {
-    const result: any = await TasksApi.removeTask(id)
-    const newListItems: listItemType[] = []
-    this.listItems.filter(item => {
-      if (result.data.deleteTodo.id !== item.id) {
-        newListItems.push(item)
-      }
-    })
-    this.listItems = newListItems
+    this.removeTaskAction(id)
   }
 
   async created() {

@@ -1,7 +1,6 @@
 import * as TasksApi from '@/apis/Tasks/'
 import Task from '@/types/Task'
-import { API } from 'aws-amplify'
-import Vuex, { createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import { DefineActions, DefineGetters, DefineMutations } from 'vuex-type-helper'
 
 export interface State {
@@ -13,10 +12,16 @@ export interface Getters {
 }
 
 export interface Mutations {
+  addTask: {}
+  updateTask: {}
+  removeTask: {}
   getTasks: {}
 }
 
 export interface Actions {
+  addTaskAction: {}
+  updateTaskAction: {}
+  removeTaskAction: {}
   getTasksAction: {}
 }
 
@@ -29,12 +34,46 @@ export const getters: DefineGetters<Getters, State> = {
 }
 
 export const mutations: DefineMutations<Mutations, State> = {
+  addTask(state, newTask: Task) {
+    state.tasks.push(newTask)
+  },
+  updateTask(state, editTask: Task) {
+    // state.tasks = state.tasks.map(item => {
+    //   if (item.id === editTask.id) {
+    //     item = editTask
+    //   }
+    // })
+  },
+  removeTask(state, removeId: string) {
+    state.tasks = state.tasks.filter(item => {
+      return item.id !== removeId
+    })
+  },
   getTasks(state, tasks) {
     state.tasks = tasks
   },
 }
 
 export const actions: DefineActions<Actions, State, Mutations, Getters> = {
+  async addTaskAction({ commit }, payload) {
+    const result: any = await TasksApi.createTask(
+      payload.title,
+      payload.description
+    )
+    commit('addTask', result.data.createTodo)
+  },
+  async updateTaskAction({ commit }, payload) {
+    const result: any = await TasksApi.updateTask(
+      payload.id,
+      payload.title,
+      payload.description
+    )
+    commit('updateTask', result.data.updateTodo)
+  },
+  async removeTaskAction({ commit }, id: string) {
+    const result: any = await TasksApi.removeTask(id)
+    commit('removeTask', result.data.deleteTodo.id)
+  },
   async getTasksAction({ commit }) {
     const result: any = await TasksApi.getList()
     commit('getTasks', result.data.listTodos.items)
