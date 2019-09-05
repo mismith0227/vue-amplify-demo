@@ -6,13 +6,15 @@
 </template>
 
 <script>
-import Header from './components/Header'
+import Header from '@/components/organisms/Header'
 
 export default {
   components: {
     Header,
   },
 }
+
+console.log(process.env.VUE_APP_NODE_ENV)
 </script>
 
 

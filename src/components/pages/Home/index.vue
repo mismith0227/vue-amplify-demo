@@ -21,23 +21,11 @@
         </div>
       </el-dialog>
 
-      <div class="todos">
-        <div>todoリスト</div>
-        <div class="todo" v-for="item in listItems" :key="item.name">
-          <div class="todo-content">
-            <div class="todo-title" slot="header">{{ item.name }}</div>
-            <div class="todo-desc">{{ item.description }}</div>
-            <div class="todo-desc">最終スタンプ日：xxxx/xx/xx</div>
-          </div>
-          <el-button class="card-button" type="primary">Done</el-button>
-          <el-button class="card-button" type="info" @click="openEditModal(item)">編集</el-button>
-          <el-button
-            class="card-button card-delete-button"
-            type="danger"
-            @click="remove(item.id)"
-          >削除</el-button>
-        </div>
-      </div>
+      <TaskList
+        :listItems="this.tasks"
+        @edit-item="openEditModal($event)"
+        @remove-item="remove($event)"
+      />
 
       <el-dialog title="Todo編集" :visible.sync="dialogEditFormVisible">
         <div class="form">
@@ -61,8 +49,12 @@
 </template>
 
 <script lang="ts">
+import * as TasksApi from '@/apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
-import { API, graphqlOperation } from 'aws-amplify'
+import TaskList from '@/components/organisms/TaskList/index.vue'
+import { mapActions, Actions } from '@/store/modules/tasks'
+import { Task } from '@/types/Task'
+import { Getter } from 'vuex-class'
 
 type listItemType = {
   id: string
@@ -70,8 +62,20 @@ type listItemType = {
   description: string
 }
 
-@Component({})
-export default class Todo extends Vue {
+@Component({
+  methods: {
+    ...mapActions([
+      'getTasksAction',
+      'addTaskAction',
+      'updateTaskAction',
+      'removeTaskAction',
+    ]),
+  },
+  components: {
+    TaskList,
+  },
+})
+export default class Home extends Vue {
   cardTitle: string = ''
   cardBody: string = ''
   editId: string = ''
@@ -86,26 +90,17 @@ export default class Todo extends Vue {
     }
   }
 
-  async created() {
-    await this.getListItems()
-  }
+  @Getter('tasks/entities') tasks!: Task[]
+
+  getTasksAction!: () => void
+  addTaskAction!: (payload) => void
+  updateTaskAction!: (payload) => void
+  removeTaskAction!: (id: string) => void
 
   // Todoの作成
   public async create() {
-    const gqlBody = `
-      mutation create {
-        createTodo(input: {
-          name: "${this.cardTitle}"
-          description: "${this.cardBody}"
-        }) {
-          id
-          name
-          description
-        }
-      }
-    `
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
-    this.listItems.unshift(result.data.createTodo)
+    this.addTaskAction({ title: this.cardTitle, description: this.cardBody })
+
     this.cardTitle = ''
     this.cardBody = ''
     this.$data.dialogFormVisible = false
@@ -120,65 +115,27 @@ export default class Todo extends Vue {
 
   // Todoの編集
   public async edit() {
-    const gqlBody = `
-      mutation update {
-        updateTodo(
-          input: {
-            id: "${this.editId}"
-            name: "${this.editTitle}"
-            description: "${this.editBody}"
-          }
-        ) {
-          id
-          name
-          description
-        }
-      }
-    `
-
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
-    // TODO: reduce
-    await this.getListItems()
+    this.updateTaskAction({
+      id: this.editId,
+      title: this.editTitle,
+      description: this.editBody,
+    })
 
     this.$data.dialogEditFormVisible = false
   }
 
   // Todoの削除
   public async remove(id: string) {
-    const gqlBody = `
-      mutation delete {
-        deleteTodo(input: {
-          id: "${id}"
-        }) {
-          id
-        }
-      }
-    `
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
-    const newListItems: listItemType[] = []
-    this.listItems.filter(item => {
-      if (result.data.deleteTodo.id !== item.id) {
-        newListItems.push(item)
-      }
-    })
-    this.listItems = newListItems
+    this.removeTaskAction(id)
+  }
+
+  async created() {
+    await this.getListItems()
   }
 
   // Todoリスト取得
   public async getListItems() {
-    const gqlBody = `
-      query list {
-        listTodos(limit: 10) {
-          items {
-            id
-            name
-            description
-          }
-        }
-      }
-    `
-    const result: any = await API.graphql(graphqlOperation(gqlBody))
-    this.listItems = result.data.listTodos.items
+    this.getTasksAction()
   }
 }
 </script>
@@ -197,29 +154,6 @@ export default class Todo extends Vue {
   display: flex;
   margin: 8px 0 0;
   justify-content: center;
-}
-
-.todos {
-  margin: 24px 0 0;
-}
-
-.todo {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding: 8px;
-  &:first-child {
-    border-top: 1px solid #ccc;
-  }
-}
-
-.todo-content {
-  flex: 1;
-}
-
-.todo-title {
-  font-size: 24px;
-  font-weight: bold;
 }
 
 .card-delete-button {
