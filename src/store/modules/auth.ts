@@ -175,6 +175,7 @@ export const mutations: DefineMutations<Mutations, State> = {
       })
   },
   setUser(state, user) {
+    // return { ...state, user }
     state.user = user
   },
 }

@@ -8,7 +8,7 @@ export interface State {
 }
 
 export interface Getters {
-  tasks: Task[]
+  entities: Task[]
 }
 
 export interface Mutations {
@@ -30,7 +30,7 @@ export const state: State = {
 }
 
 export const getters: DefineGetters<Getters, State> = {
-  tasks: state => state.tasks,
+  entities: state => state.tasks,
 }
 
 export const mutations: DefineMutations<Mutations, State> = {
@@ -38,11 +38,7 @@ export const mutations: DefineMutations<Mutations, State> = {
     state.tasks.push(newTask)
   },
   updateTask(state, editTask: Task) {
-    // state.tasks = state.tasks.map(item => {
-    //   if (item.id === editTask.id) {
-    //     item = editTask
-    //   }
-    // })
+    // TODO
   },
   removeTask(state, removeId: string) {
     state.tasks = state.tasks.filter(item => {
@@ -50,6 +46,7 @@ export const mutations: DefineMutations<Mutations, State> = {
     })
   },
   getTasks(state, tasks) {
+    // return {...state, tasks}
     state.tasks = tasks
   },
 }

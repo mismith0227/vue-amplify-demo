@@ -14,7 +14,7 @@ function getUser() {
   return Auth.currentAuthenticatedUser()
     .then(data => {
       if (data && data.signInUserSession) {
-        AmplifyStore.commit('setUser', data)
+        auth.mutations.setUser(auth.state, data)
         return data
       }
     })

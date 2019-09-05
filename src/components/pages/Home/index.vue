@@ -90,7 +90,7 @@ export default class Home extends Vue {
     }
   }
 
-  @Getter('tasks/tasks') tasks!: Task[]
+  @Getter('tasks/entities') tasks!: Task[]
 
   getTasksAction!: () => void
   addTaskAction!: (payload) => void
