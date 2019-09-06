@@ -9,6 +9,7 @@ export function signOut() {
       return router.push('/auth')
     })
     .catch(err => {
+      // tslint:disable-next-line
       console.error(err)
     })
 }
