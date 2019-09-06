@@ -22,7 +22,7 @@
       </el-dialog>
 
       <TaskList
-        :listItems="this.tasks"
+        :listItems="tasks"
         @edit-item="openEditModal($event)"
         @remove-item="remove($event)"
       />
@@ -53,8 +53,8 @@ import * as TasksApi from '@/apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
 import TaskList from '@/components/organisms/TaskList/index.vue'
 import { mapActions, Actions } from '@/store/modules/tasks'
-import { Task } from '@/types/Task'
-import { Getter } from 'vuex-class'
+import Task from '@/types/Task'
+import { Action, Getter } from 'vuex-class'
 
 type listItemType = {
   id: string
@@ -62,20 +62,22 @@ type listItemType = {
   description: string
 }
 
+const namespace: string = 'task'
+
 @Component({
-  methods: {
-    ...mapActions([
-      'getTasksAction',
-      'addTaskAction',
-      'updateTaskAction',
-      'removeTaskAction',
-    ]),
-  },
   components: {
     TaskList,
   },
 })
 export default class Home extends Vue {
+  @Action('getTasksAction', { namespace }) getTasksAction: any
+  @Getter('tasks', { namespace }) tasks!: Task[]
+
+  // Todoリスト取得 mountedとcreatedどっちがいい？
+  mounted() {
+    this.getTasksAction()
+  }
+
   cardTitle: string = ''
   cardBody: string = ''
   editId: string = ''
@@ -90,9 +92,7 @@ export default class Home extends Vue {
     }
   }
 
-  @Getter('tasks/entities') tasks!: Task[]
-
-  getTasksAction!: () => void
+  // getTasksAction!: () => void
   addTaskAction!: (payload) => void
   updateTaskAction!: (payload) => void
   removeTaskAction!: (id: string) => void
@@ -129,14 +129,13 @@ export default class Home extends Vue {
     this.removeTaskAction(id)
   }
 
-  async created() {
-    await this.getListItems()
-  }
+  // async created() {
+  //   await this.getListItems()
+  // }
 
-  // Todoリスト取得
-  public async getListItems() {
-    this.getTasksAction()
-  }
+  // public async getListItems() {
+  //   this.getTasksAction()
+  // }
 }
 </script>
 
