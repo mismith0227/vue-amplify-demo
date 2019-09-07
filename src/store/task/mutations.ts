@@ -8,7 +8,8 @@ export const mutations: MutationTree<TaskState> = {
     state.error = false
     state.messageError = []
   },
-  [types.ADD_TASK_SUCCESS](state) {
+  [types.ADD_TASK_SUCCESS](state, payload: Task) {
+    state.tasks.push(payload)
     state.error = false
     state.messageError = []
   },
@@ -20,7 +21,13 @@ export const mutations: MutationTree<TaskState> = {
     state.error = true
     state.messageError = undefined
   },
-  [types.UPDATE_TASK_SUCCESS](state) {
+  [types.UPDATE_TASK_SUCCESS](state, payload: Task) {
+    state.tasks.map(item => {
+      if (item.id === payload.id) {
+        item.name = payload.name
+        item.description = payload.description
+      }
+    })
     state.error = false
     state.messageError = []
   },
@@ -32,7 +39,11 @@ export const mutations: MutationTree<TaskState> = {
     state.error = true
     state.messageError = undefined
   },
-  [types.REMOVE_TASK_SUCCESS](state) {
+  [types.REMOVE_TASK_SUCCESS](state, payload: string) {
+    state.tasks = state.tasks.filter(item => {
+      return item.id !== payload
+    })
+
     state.error = false
   },
   [types.REMOVE_TASK_ERROR](state) {

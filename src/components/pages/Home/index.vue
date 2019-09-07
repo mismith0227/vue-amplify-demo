@@ -70,6 +70,9 @@ const namespace: string = 'task'
   },
 })
 export default class Home extends Vue {
+  @Action('addTaskAction', { namespace }) addTaskAction: any
+  @Action('updateTaskAction', { namespace }) updateTaskAction: any
+  @Action('removeTaskAction', { namespace }) removeTaskAction: any
   @Action('getTasksAction', { namespace }) getTasksAction: any
   @Getter('tasks', { namespace }) tasks!: Task[]
 
@@ -92,13 +95,9 @@ export default class Home extends Vue {
     }
   }
 
-  // getTasksAction!: () => void
-  addTaskAction!: (payload) => void
-  updateTaskAction!: (payload) => void
-  removeTaskAction!: (id: string) => void
-
   // Todoの作成
   public async create() {
+    // TODO: validate
     this.addTaskAction({ title: this.cardTitle, description: this.cardBody })
 
     this.cardTitle = ''

@@ -10,11 +10,10 @@ export const actions: ActionTree<TaskState, RootState> = {
       payload.title,
       payload.description
     )
-    commit('addTask', response.data.createTodo)
 
     try {
-      if (response && response.data.status === 'success') {
-        commit(types.ADD_TASK_SUCCESS)
+      if (response.data) {
+        commit(types.ADD_TASK_SUCCESS, response.data.createTodo)
       } else {
         commit(types.ADD_TASK_FAILED, response.data.errors)
       }
@@ -22,10 +21,34 @@ export const actions: ActionTree<TaskState, RootState> = {
       commit(types.ADD_TASK_ERROR)
     }
   },
+  async updateTaskAction({ commit }, payload) {
+    const response: any = await TasksApi.updateTask(
+      payload.id,
+      payload.title,
+      payload.description
+    )
+    try {
+      if (response.data) {
+        commit(types.UPDATE_TASK_SUCCESS, response.data.updateTodo)
+      } else {
+        commit(types.UPDATE_TASK_FAILED, response.data.errors)
+      }
+    } catch (error) {
+      commit(types.UPDATE_TASK_ERROR)
+    }
+  },
+  async removeTaskAction({ commit }, id: string) {
+    const response: any = await TasksApi.removeTask(id)
+    try {
+      commit(types.REMOVE_TASK_SUCCESS, response.data.deleteTodo.id)
+    } catch (error) {
+      commit(types.REMOVE_TASK_ERROR, response.data.errors)
+    }
+  },
   async getTasksAction({ commit }) {
     const response: any = await TasksApi.getList()
     try {
-      if (response && response.data) {
+      if (response.data) {
         commit(types.LIST_TASK_SUCCESS, response.data.listTodos.items)
       }
     } catch (error) {
