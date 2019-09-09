@@ -1,5 +1,5 @@
-import { auth } from '@/store/modules/auth'
 import { task } from '@/store/task'
+import { user } from '@/store/user'
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { RootState } from './rootState'
@@ -11,7 +11,7 @@ const store: StoreOptions<RootState> = {
     version: '1.0.0',
   },
   modules: {
-    auth,
+    user,
     task,
   },
 }

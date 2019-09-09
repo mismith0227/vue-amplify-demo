@@ -52,9 +52,8 @@
 import * as TasksApi from '@/apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
 import TaskList from '@/components/organisms/TaskList/index.vue'
-import { mapActions, Actions } from '@/store/modules/tasks'
-import Task from '@/types/Task'
 import { Action, Getter } from 'vuex-class'
+import Task from '@/store/task/types'
 
 type listItemType = {
   id: string

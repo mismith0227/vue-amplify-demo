@@ -1,4 +1,4 @@
-export default class Task {
+export default class User {
   public id: string = ''
   public name: string = ''
   public description: string

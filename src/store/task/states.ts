@@ -1,4 +1,4 @@
-import Task from '@/models/task'
+import Task from './types'
 
 export interface TaskState {
   taskModel?: Task
