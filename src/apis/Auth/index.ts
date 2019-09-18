@@ -5,8 +5,7 @@ import { Auth } from 'aws-amplify'
 export function signOut() {
   Auth.signOut()
     .then(data => {
-      AmplifyStore.commit('setUser', null)
-      return router.push('/auth')
+      return router.push('/login')
     })
     .catch(err => {
       // tslint:disable-next-line

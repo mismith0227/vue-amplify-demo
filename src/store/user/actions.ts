@@ -9,8 +9,7 @@ export const actions: ActionTree<UserState, RootState> = {
     commit(actionTypes.LOGIN_SUCCESS, payload)
   },
   async signoutAction({ commit }) {
-    const response: any = await AuthApi.signOut
-    console.log(response)
+    const response: any = await AuthApi.signOut()
     commit(actionTypes.LOGOUT_SUCCESS)
     try {
       commit(actionTypes.LOGOUT_SUCCESS)

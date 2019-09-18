@@ -10,38 +10,6 @@ import Home from './components/pages/Home/index.vue'
 Vue.use(Router)
 Vue.use(AmplifyPlugin, AmplifyModules)
 
-// function getUser() {
-//   return Auth.currentAuthenticatedUser()
-//     .then(data => {
-//       console.log(data)
-//       if (data && data.signInUserSession) {
-//         auth.mutations.setUser(auth.state, data)
-//         return data
-//       }
-//     })
-//     .catch(e => {
-//       AmplifyStore.commit('setUser', null)
-//       return null
-//     })
-// }
-
-// getUser().then((user, error) => {
-//   if (user) {
-//     router.push({ path: '/' })
-//   }
-// })
-
-// AmplifyEventBus.$on('authState', async state => {
-//   if (state === 'signedOut') {
-//     user = null
-//     AmplifyStore.commit('setUser', null)
-//     router.push({ path: '/auth' })
-//   } else if (state === 'signedIn') {
-//     user = await getUser()
-//     router.push({ path: '/' })
-//   }
-// })
-
 const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -56,23 +24,44 @@ const router = new Router({
       path: '/login',
       name: 'login',
       component: components.Authenticator,
+      meta: { requiresAuth: false },
     },
   ],
 })
 
-router.beforeEach(async (to, from, next) => {
-  if (to.meta.requiresAuth) {
-    Auth.currentAuthenticatedUser()
-      .then(data => {
-        store.commit('user/SET_USER_SUCCESS', data)
+// storeからsinein out の状態をとってくる
+AmplifyEventBus.$on('authState', async (state: string) => {
+  if (state === 'signedOut') {
+    store.commit('user/SET_USER_SUCCESS', null)
+    router.push({ path: '/auth' })
+  } else if (state === 'signedIn') {
+    router.push({ path: '/' })
+  }
+})
 
-        next('/')
-      })
-      .catch(err => {
-        // tslint:disable-next-line
-        console.log(err)
-        next({ path: '/login' })
-      })
+router.beforeEach(async (to, from, next) => {
+  console.log(to)
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    try {
+      const user = await Auth.currentAuthenticatedUser()
+      store.commit('user/SET_USER_SUCCESS', user)
+      if (to.path === '/confirmCode' || to.path === '/login') {
+        return next('/')
+      }
+      return next()
+    } catch (err) {
+      if (err === 'not authenticated') {
+        if (to.path !== '/confirmCode' && to.path !== '/signin-mfa') {
+          return next('/login')
+        } else {
+          // if (auth.state.tempUser || auth.state.user) {
+          //   return next()
+          // }
+          return next('/login')
+        }
+      }
+      return next('/')
+    }
   }
   return next()
 })

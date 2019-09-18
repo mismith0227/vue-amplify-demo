@@ -28,7 +28,7 @@ export default class Header extends Vue {
   @Getter('user', { namespace }) user!: User[]
 
   public get getUser() {
-    console.log(this.user)
+    // console.log(this.user)
     return this.user
   }
 
