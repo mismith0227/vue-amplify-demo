@@ -49,7 +49,6 @@
 </template>
 
 <script lang="ts">
-import * as TasksApi from '@/apis/Tasks/'
 import { Component, Vue } from 'vue-property-decorator'
 import TaskList from '@/components/organisms/TaskList/index.vue'
 import { Action, Getter } from 'vuex-class'

@@ -1,3 +1,5 @@
+import Home from '@/components/pages/Home/index.vue'
+import Signin from '@/components/pages/Signin/index.vue'
 import store from '@/store'
 import { actions as userAction } from '@/store/user/actions'
 import { Auth } from 'aws-amplify'
@@ -5,7 +7,6 @@ import * as AmplifyModules from 'aws-amplify'
 import { AmplifyEventBus, AmplifyPlugin, components } from 'aws-amplify-vue'
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './components/pages/Home/index.vue'
 
 Vue.use(Router)
 Vue.use(AmplifyPlugin, AmplifyModules)
@@ -23,21 +24,21 @@ const router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: components.Authenticator,
+      component: Signin,
       meta: { requiresAuth: false },
     },
   ],
 })
 
 // storeからsinein out の状態をとってくる
-AmplifyEventBus.$on('authState', async (state: string) => {
-  if (state === 'signedOut') {
-    store.commit('user/SET_USER_SUCCESS', null)
-    router.push({ path: '/auth' })
-  } else if (state === 'signedIn') {
-    router.push({ path: '/' })
-  }
-})
+// AmplifyEventBus.$on('authState', async (state: string) => {
+//   if (state === 'signedOut') {
+//     store.commit('user/SET_USER_SUCCESS', null)
+//     router.push({ path: '/auth' })
+//   } else if (state === 'signedIn') {
+//     router.push({ path: '/' })
+//   }
+// })
 
 router.beforeEach(async (to, from, next) => {
   console.log(to)
