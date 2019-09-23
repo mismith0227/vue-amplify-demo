@@ -1,7 +1,6 @@
 import Home from '@/components/pages/Home/index.vue'
 import Signin from '@/components/pages/Signin/index.vue'
 import store from '@/store'
-import { actions as userAction } from '@/store/user/actions'
 import { Auth } from 'aws-amplify'
 import * as AmplifyModules from 'aws-amplify'
 import { AmplifyEventBus, AmplifyPlugin, components } from 'aws-amplify-vue'
@@ -41,7 +40,6 @@ const router = new Router({
 // })
 
 router.beforeEach(async (to, from, next) => {
-  console.log(to)
   if (to.matched.some(record => record.meta.requiresAuth)) {
     try {
       const user = await Auth.currentAuthenticatedUser()
