@@ -10,11 +10,11 @@
 </template>
 
 <script lang="ts">
-import router from '@/router'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 import TextComponent from '@/components/atoms/Text/index.vue'
-import { Action, Getter } from 'vuex-class'
+import router from '@/router'
 import User from '@/store/user/types'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 
 const namespace: string = 'user'
 
@@ -24,11 +24,10 @@ const namespace: string = 'user'
   },
 })
 export default class Header extends Vue {
-  @Action('signoutAction', { namespace }) signoutAction: any
-  @Getter('user', { namespace }) user!: User[]
+  @Action('signoutAction', { namespace }) private signoutAction: any
+  @Getter('user', { namespace }) private user!: User[]
 
   public get getUser() {
-    // console.log(this.user)
     return this.user
   }
 
@@ -38,6 +37,7 @@ export default class Header extends Vue {
   }
 
   public textClick() {
+    // tslint:disable-next-line
     console.log('test')
   }
 }

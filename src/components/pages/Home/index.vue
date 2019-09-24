@@ -49,11 +49,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
 import TaskList from '@/components/organisms/TaskList/index.vue'
-import { Action, Getter } from 'vuex-class'
 import Task from '@/store/task/types'
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 
+/* tslint:disable:interface-over-type-literal */
 type listItemType = {
   id: string
   name: string
@@ -68,25 +69,26 @@ const namespace: string = 'task'
   },
 })
 export default class Home extends Vue {
-  @Action('addTaskAction', { namespace }) addTaskAction: any
-  @Action('updateTaskAction', { namespace }) updateTaskAction: any
-  @Action('removeTaskAction', { namespace }) removeTaskAction: any
-  @Action('getTasksAction', { namespace }) getTasksAction: any
-  @Getter('tasks', { namespace }) tasks!: Task[]
+  @Action('addTaskAction', { namespace }) public addTaskAction: any
+  @Action('updateTaskAction', { namespace }) public updateTaskAction: any
+  @Action('removeTaskAction', { namespace }) public removeTaskAction: any
+  @Action('getTasksAction', { namespace }) public getTasksAction: any
+  @Getter('tasks', { namespace }) public tasks!: Task[]
 
   // Todoリスト取得 mountedとcreatedどっちがいい？
-  mounted() {
+
+  public listItems: listItemType[] = []
+  private cardTitle: string = ''
+  private cardBody: string = ''
+  private editId: string = ''
+  private editTitle: string = ''
+  private editBody: string = ''
+
+  private mounted() {
     this.getTasksAction()
   }
 
-  cardTitle: string = ''
-  cardBody: string = ''
-  editId: string = ''
-  editTitle: string = ''
-  editBody: string = ''
-  listItems: listItemType[] = []
-
-  data() {
+  private data() {
     return {
       dialogFormVisible: false,
       dialogEditFormVisible: false,
@@ -94,7 +96,7 @@ export default class Home extends Vue {
   }
 
   // Todoの作成
-  public async create() {
+  private async create() {
     // TODO: validate
     this.addTaskAction({ title: this.cardTitle, description: this.cardBody })
 
@@ -103,7 +105,7 @@ export default class Home extends Vue {
     this.$data.dialogFormVisible = false
   }
 
-  public async openEditModal(item: listItemType) {
+  private async openEditModal(item: listItemType) {
     this.editId = item.id
     this.editTitle = item.name
     this.editBody = item.description
@@ -111,7 +113,7 @@ export default class Home extends Vue {
   }
 
   // Todoの編集
-  public async edit() {
+  private async edit() {
     this.updateTaskAction({
       id: this.editId,
       title: this.editTitle,
@@ -122,17 +124,9 @@ export default class Home extends Vue {
   }
 
   // Todoの削除
-  public async remove(id: string) {
+  private async remove(id: string) {
     this.removeTaskAction(id)
   }
-
-  // async created() {
-  //   await this.getListItems()
-  // }
-
-  // public async getListItems() {
-  //   this.getTasksAction()
-  // }
 }
 </script>
 

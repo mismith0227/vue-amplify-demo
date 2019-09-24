@@ -14,10 +14,10 @@ const namespace: string = 'user'
 
 @Component({})
 export default class Signin extends Vue {
-  @Action('signinAction', { namespace }) signinAction: any
+  @Action('signinAction', { namespace }) private signinAction: any
 
-  userName: string = ''
-  password: string = ''
+  private userName: string = ''
+  private password: string = ''
 
   public async clickSignin() {
     this.signinAction({ userName: this.userName, password: this.password })
