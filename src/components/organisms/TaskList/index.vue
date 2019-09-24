@@ -1,7 +1,7 @@
 <template>
   <div class="todos">
     <div class="todos-title">Taskリスト</div>
-    <div class="todo" v-for="item in listItems" :key="item.name">
+    <div class="todo" v-for="item in listItems" :key="item.id">
       <div class="todo-content">
         <div class="todo-title" slot="header">{{ item.name }}</div>
         <div class="todo-desc">{{ item.description }}</div>
@@ -19,19 +19,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator'
+import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class TaskList extends Vue {
   @Prop() private listItems
 
   @Emit('edit-item')
-  editItem(item) {}
+  /* tslint:disable:no-empty */
+  private editItem(item) {}
 
   @Emit('remove-item')
-  removeItem(id) {}
+  private removeItem(id) {}
 
-  onClickRemove(id) {
+  private onClickRemove(id) {
     this.removeItem(id)
   }
 }

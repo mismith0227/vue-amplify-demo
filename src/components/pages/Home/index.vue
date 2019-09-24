@@ -22,7 +22,7 @@
       </el-dialog>
 
       <TaskList
-        :listItems="this.tasks"
+        :listItems="tasks"
         @edit-item="openEditModal($event)"
         @remove-item="remove($event)"
       />
@@ -49,56 +49,55 @@
 </template>
 
 <script lang="ts">
-import * as TasksApi from '@/apis/Tasks/'
-import { Component, Vue } from 'vue-property-decorator'
 import TaskList from '@/components/organisms/TaskList/index.vue'
-import { mapActions, Actions } from '@/store/modules/tasks'
-import { Task } from '@/types/Task'
-import { Getter } from 'vuex-class'
+import Task from '@/store/task/types'
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 
+/* tslint:disable:interface-over-type-literal */
 type listItemType = {
   id: string
   name: string
   description: string
 }
 
+const namespace: string = 'task'
+
 @Component({
-  methods: {
-    ...mapActions([
-      'getTasksAction',
-      'addTaskAction',
-      'updateTaskAction',
-      'removeTaskAction',
-    ]),
-  },
   components: {
     TaskList,
   },
 })
 export default class Home extends Vue {
-  cardTitle: string = ''
-  cardBody: string = ''
-  editId: string = ''
-  editTitle: string = ''
-  editBody: string = ''
-  listItems: listItemType[] = []
+  @Action('addTaskAction', { namespace }) public addTaskAction: any
+  @Action('updateTaskAction', { namespace }) public updateTaskAction: any
+  @Action('removeTaskAction', { namespace }) public removeTaskAction: any
+  @Action('getTasksAction', { namespace }) public getTasksAction: any
+  @Getter('tasks', { namespace }) public tasks!: Task[]
 
-  data() {
+  // Todoリスト取得 mountedとcreatedどっちがいい？
+
+  public listItems: listItemType[] = []
+  private cardTitle: string = ''
+  private cardBody: string = ''
+  private editId: string = ''
+  private editTitle: string = ''
+  private editBody: string = ''
+
+  private mounted() {
+    this.getTasksAction()
+  }
+
+  private data() {
     return {
       dialogFormVisible: false,
       dialogEditFormVisible: false,
     }
   }
 
-  @Getter('tasks/entities') tasks!: Task[]
-
-  getTasksAction!: () => void
-  addTaskAction!: (payload) => void
-  updateTaskAction!: (payload) => void
-  removeTaskAction!: (id: string) => void
-
   // Todoの作成
-  public async create() {
+  private async create() {
+    // TODO: validate
     this.addTaskAction({ title: this.cardTitle, description: this.cardBody })
 
     this.cardTitle = ''
@@ -106,7 +105,7 @@ export default class Home extends Vue {
     this.$data.dialogFormVisible = false
   }
 
-  public async openEditModal(item: listItemType) {
+  private async openEditModal(item: listItemType) {
     this.editId = item.id
     this.editTitle = item.name
     this.editBody = item.description
@@ -114,7 +113,7 @@ export default class Home extends Vue {
   }
 
   // Todoの編集
-  public async edit() {
+  private async edit() {
     this.updateTaskAction({
       id: this.editId,
       title: this.editTitle,
@@ -125,17 +124,8 @@ export default class Home extends Vue {
   }
 
   // Todoの削除
-  public async remove(id: string) {
+  private async remove(id: string) {
     this.removeTaskAction(id)
-  }
-
-  async created() {
-    await this.getListItems()
-  }
-
-  // Todoリスト取得
-  public async getListItems() {
-    this.getTasksAction()
   }
 }
 </script>

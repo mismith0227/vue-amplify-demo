@@ -10,10 +10,13 @@
 </template>
 
 <script lang="ts">
-import router from '@/router'
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { signOut } from '@/apis/Auth'
 import TextComponent from '@/components/atoms/Text/index.vue'
+import router from '@/router'
+import User from '@/store/user/types'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
+const namespace: string = 'user'
 
 @Component({
   components: {
@@ -21,16 +24,20 @@ import TextComponent from '@/components/atoms/Text/index.vue'
   },
 })
 export default class Header extends Vue {
+  @Action('signoutAction', { namespace }) private signoutAction: any
+  @Getter('user', { namespace }) private user!: User[]
+
   public get getUser() {
-    return this.$store.state.auth.user
+    return this.user
   }
 
   // サインアウト処理
   public onClickSignOut() {
-    signOut()
+    this.signoutAction()
   }
 
   public textClick() {
+    // tslint:disable-next-line
     console.log('test')
   }
 }

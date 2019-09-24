@@ -1,45 +1,14 @@
-import * as auth from '@/store/modules/auth.ts'
+import Home from '@/components/pages/Home/index.vue'
+import Signin from '@/components/pages/Signin/index.vue'
+import store from '@/store'
 import { Auth } from 'aws-amplify'
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from './components/pages/Home/index.vue'
 import * as AmplifyModules from 'aws-amplify'
 import { AmplifyEventBus, AmplifyPlugin, components } from 'aws-amplify-vue'
-import AmplifyStore from './store'
+import Vue from 'vue'
+import Router from 'vue-router'
 
 Vue.use(Router)
 Vue.use(AmplifyPlugin, AmplifyModules)
-
-function getUser() {
-  return Auth.currentAuthenticatedUser()
-    .then(data => {
-      if (data && data.signInUserSession) {
-        auth.mutations.setUser(auth.state, data)
-        return data
-      }
-    })
-    .catch(e => {
-      AmplifyStore.commit('setUser', null)
-      return null
-    })
-}
-
-getUser().then((user, error) => {
-  if (user) {
-    router.push({ path: '/' })
-  }
-})
-
-AmplifyEventBus.$on('authState', async state => {
-  if (state === 'signedOut') {
-    user = null
-    AmplifyStore.commit('setUser', null)
-    router.push({ path: '/auth' })
-  } else if (state === 'signedIn') {
-    user = await getUser()
-    router.push({ path: '/' })
-  }
-})
 
 const router = new Router({
   mode: 'history',
@@ -52,27 +21,46 @@ const router = new Router({
       meta: { requiresAuth: true },
     },
     {
-      path: '/auth',
-      name: 'auth',
-      component: components.Authenticator,
+      path: '/login',
+      name: 'login',
+      component: Signin,
+      meta: { requiresAuth: false },
     },
   ],
 })
 
-router.beforeResolve(async (to, from, next) => {
-  if (to.matched.some(record => record.meta.auth)) {
-    const user = await Auth.currentAuthenticatedUser()
-    await auth.mutations.setUser(auth.state, user)
+// storeからsinein out の状態をとってくる
+// AmplifyEventBus.$on('authState', async (state: string) => {
+//   if (state === 'signedOut') {
+//     store.commit('user/SET_USER_SUCCESS', null)
+//     router.push({ path: '/auth' })
+//   } else if (state === 'signedIn') {
+//     router.push({ path: '/' })
+//   }
+// })
 
-    if (!user) {
-      return next({
-        path: '/auth',
-        query: {
-          redirect: to.fullPath,
-        },
-      })
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    try {
+      const user = await Auth.currentAuthenticatedUser()
+      store.commit('user/SET_USER_SUCCESS', user)
+      if (to.path === '/confirmCode' || to.path === '/login') {
+        return next('/')
+      }
+      return next()
+    } catch (err) {
+      if (err === 'not authenticated') {
+        if (to.path !== '/confirmCode' && to.path !== '/signin-mfa') {
+          return next('/login')
+        } else {
+          // if (auth.state.tempUser || auth.state.user) {
+          //   return next()
+          // }
+          return next('/login')
+        }
+      }
+      return next('/')
     }
-    return next()
   }
   return next()
 })

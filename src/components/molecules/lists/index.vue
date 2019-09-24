@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Emit } from 'vue-property-decorator'
+import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
 import List from './list/index.vue'
 
 @Component({
@@ -19,7 +19,8 @@ export default class Lists extends Vue {
   @Prop() private lists
 
   @Emit('click')
-  click() {}
+  /* tslint:disable:no-empty */
+  private click() {}
 }
 </script>
 

@@ -1,16 +1,19 @@
-import { auth } from '@/store/modules/auth'
-import { tasks } from '@/store/modules/tasks'
+import { task } from '@/store/task'
+import { user } from '@/store/user'
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { StoreOptions } from 'vuex'
+import { RootState } from './rootState'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  modules: {
-    auth,
-    tasks,
+const store: StoreOptions<RootState> = {
+  state: {
+    version: '1.0.0',
   },
-  state: {},
-  mutations: {},
-  actions: {},
-})
+  modules: {
+    user,
+    task,
+  },
+}
+
+export default new Vuex.Store<RootState>(store)

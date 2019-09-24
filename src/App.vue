@@ -14,6 +14,7 @@ export default {
   },
 }
 
+// tslint:disable-next-line
 console.log(process.env.VUE_APP_NODE_ENV)
 </script>
 
