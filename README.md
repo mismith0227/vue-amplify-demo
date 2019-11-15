@@ -1,4 +1,4 @@
-# stamp-note
+# vue-amplify-demo
 
 ## Project setup
 
